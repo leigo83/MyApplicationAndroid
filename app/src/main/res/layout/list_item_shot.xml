@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    fresco:cardElevation="3dp"
+    fresco:cardCornerRadius="4dp"
+    fresco:cardBackgroundColor="#E6E6E6"
+    android:layout_marginTop="8dp">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/shot_image"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        fresco:placeholderImageScaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/shot_view_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimary"
+            android:paddingLeft="8dp"/>
+        <TextView
+            android:id="@+id/shot_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/shot_bucket_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimary"
+            android:paddingRight="8dp"/>
+    </LinearLayout>
+
+</LinearLayout>
+    <View
+        android:id="@+id/shot_clickable_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true">
+    </View>
+</androidx.cardview.widget.CardView>
