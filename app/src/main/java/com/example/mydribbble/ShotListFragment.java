@@ -44,22 +44,27 @@ public class ShotListFragment extends SingleFragment {
     public static final String ShotLinkSingle = "https://api.dribbble.com/v2/shots/";
     public RecyclerView recyclerView;
     List<Shot> dataShot = new ArrayList<>();
-    public ShotListAdapter adapter = new ShotListAdapter (this, dataShot);
+    public ShotListAdapter adapter;
     private static OkHttpClient client = new OkHttpClient();
     public static String m_token;
-    private LoadMoreTask loadMoreTask;
+    private ShotListAdapter.LoadMoreTask loadMoreTask;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
         String token = getArguments().getString("Token");
         m_token = token;
-        loadMoreTask = new LoadMoreTask(token);
-        loadMoreTask.execute();
-      //  loadShots(token);
+        loadMoreTask = new ShotListAdapter.LoadMoreTask() {
+            @Override
+            public void onLoadMore() {
+                new LoadMoreTaskAsync(m_token).execute();
+            }
+        };
+        adapter = new ShotListAdapter(this, dataShot, loadMoreTask);
+        adapter.setShowLoading(true);
+        recyclerView.setAdapter(adapter);
         return view;
     }
 
@@ -73,10 +78,10 @@ public class ShotListFragment extends SingleFragment {
     }
 
 
-    class LoadMoreTask extends AsyncTask<Void, Void, List<Shot>>  {
+    class LoadMoreTaskAsync extends AsyncTask<Void, Void, List<Shot>>  {
         public String m_token;
 
-        LoadMoreTask(String token) {
+        LoadMoreTaskAsync(String token) {
             m_token = token;
         }
 
