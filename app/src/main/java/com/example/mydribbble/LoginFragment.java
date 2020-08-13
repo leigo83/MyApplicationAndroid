@@ -35,10 +35,10 @@ public class LoginFragment extends SingleFragment {
     public static final String CLIENT_SECRET_ID = "client_secret";
     public static final String REDIRECT_URI_KEY = "redirect_uri";
     public static final String SCOPE_KEY = "scope";
-    public static final String CLIENT_ID = "b44021ee74a260b530f6c07119879b15f219b5ac85a7588d543cf6d95a04c5ec";
-    public static final String CLIENT_SECRET = "b1f27d07b9e2fab6466e8cb83cf4c651d5cb0e8aea1818406798184aab7904a3";
-    public static final String REDIRECT_URI = "https://www.dribbble.com";
-    public static final String SCOPE = "public+upload";
+    public static final String CLIENT_ID = "Oes6KdBKq73rWSgS2HRkKPFdCWQTRSV_jRvIsa1GUJs";
+    public static final String CLIENT_SECRET = "MM5NOPuvLaNSA5Fl_A_lz9LieVYMpxYak2vnEeM8-Uo";
+    public static final String REDIRECT_URI = "https://www.google.com";
+    public static final String SCOPE = "public+read_user+write_user+read_photos+write_photos+write_likes+write_followers+read_collections+write_collections";
     public static final String ACCESS_TOKEN = "access_token";
     @Nullable
     @Override
@@ -75,8 +75,9 @@ public class LoginFragment extends SingleFragment {
 //                .appendQueryParameter(REDIRECT_URI_KEY, REDIRECT_URI)
 //                .appendQueryParameter(SCOPE_KEY, SCOPE)
 //                .build().toString();
-        return Uri.parse("https://dribbble.com/oauth/authorize?client_id=b44021ee74a260b530f6c07119879b15f219b5ac85a7588d543cf6d95a04c5ec&redirect_uri=https://www.dribbble.com&scope=public+upload")
-                .buildUpon().build().toString();
+        return Uri.parse("https://unsplash.com/oauth/authorize?client_id=Oes6KdBKq73rWSgS2HRkKPFdCWQTRSV_jRvIsa1GUJs" +
+                         "&redirect_uri=https://www.google.com&response_type=code" +
+                         "&scope=public+read_user+write_user+read_photos+write_photos+write_likes+write_followers+read_collections+write_collections").buildUpon().build().toString();
     }
 
     @Override
@@ -109,9 +110,10 @@ public class LoginFragment extends SingleFragment {
                 .add(CLIENT_SECRET_ID, CLIENT_SECRET)
                 .add(AuthFragment.KEY_CODE, authorCode)
                 .add(REDIRECT_URI_KEY, REDIRECT_URI)
+                .add("grant_type", "authorization_code")
                 .build();
         Request request = new Request.Builder()
-                .url("https://dribbble.com/oauth/token")
+                .url("https://unsplash.com/oauth/token")
                 .post(postbody)
                 .build();
         Response response = client.newCall(request).execute();

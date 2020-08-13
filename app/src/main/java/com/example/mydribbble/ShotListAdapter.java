@@ -1,6 +1,7 @@
 package com.example.mydribbble;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,28 +39,26 @@ public class ShotListAdapter extends RecyclerView.Adapter<ShotListViewHolder> {
     public void onBindViewHolder(@NonNull ShotListViewHolder holder, int position) {
         int type = getItemViewType(position);
         if (type == VIEW_TYPE_LOADING) {
+            Log.d("ShotQuery", "loading");
             loadMoreTask.onLoadMore();
         } else {
             ShotListViewHolder shotListViewHolder = (ShotListViewHolder) holder;
             final Shot shot = data.get(position);
-            shotListViewHolder.shot_view_count.setText(String.valueOf(shot.title));
-            shotListViewHolder.shot_like_count.setText(String.valueOf(shot.tags.get(0)));
+            shotListViewHolder.shot_view_count.setText(shot.user.username);
+            shotListViewHolder.shot_like_count.setText(String.valueOf(shot.likes));
             //   shotListViewHolder.shot_like_count.setText(String.valueOf(shot.description));
-            shotListViewHolder.shot_bucket_count.setText(String.valueOf(shot.height));
-//        shotListViewHolder.shot_view_count.setText(String.valueOf(shot.view_count));
-//        shotListViewHolder.shot_like_count.setText(String.valueOf(shot.likes_count));
-//        shotListViewHolder.shot_bucket_count.setText(String.valueOf(shot.buckets_count));
+            shotListViewHolder.shot_bucket_count.setText(String.valueOf(Integer.toString(shot.width) + "x" + Integer.toString(shot.height)));
             ImageUtils.loadShotImage(shot, shotListViewHolder.image);
-            shotListViewHolder.cover.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(shotListFragment.getActivity(), ShotActivity.class);
-                    String body = ModelUtils.toString(shot, new TypeToken<Shot>() {
-                    });
-                    intent.putExtra(ShotActivity.KEY_SHOT, body);
-                    shotListFragment.startActivityForResult(intent, shotListFragment.REQ_SHOT_CODE);
-                }
-            });
+//            shotListViewHolder.cover.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(shotListFragment.getActivity(), ShotActivity.class);
+//                    String body = ModelUtils.toString(shot, new TypeToken<Shot>() {
+//                    });
+//                    intent.putExtra(ShotActivity.KEY_SHOT, body);
+//                    shotListFragment.startActivityForResult(intent, shotListFragment.REQ_SHOT_CODE);
+//                }
+//            });
         }
     }
 
@@ -79,8 +78,11 @@ public class ShotListAdapter extends RecyclerView.Adapter<ShotListViewHolder> {
     }
 
     public void setData(List<Shot> newData) {
-        data.clear();
-        data.addAll(newData);
+        //data.clear();
+        //data.addAll(newData);
+        for (int i = 0; i < newData.size(); i++) {
+            data.add(newData.get(i));
+        }
         notifyDataSetChanged();
     }
 

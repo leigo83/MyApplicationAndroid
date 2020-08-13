@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Shot;
@@ -40,8 +42,9 @@ import static android.app.Activity.RESULT_OK;
 public class ShotListFragment extends SingleFragment {
     public static final int REQ_SHOT_CODE = 100;
     public static final String SHOT_DATA_KEY = "SHOT_KEY";
-    public static final String ShotLink = "https://api.dribbble.com/v2/user/shots";
+    public static final String ShotLink = "https://api.unsplash.com/photos";
     public static final String ShotLinkSingle = "https://api.dribbble.com/v2/shots/";
+    public static final int shotsPerPage = 10;
     public RecyclerView recyclerView;
     List<Shot> dataShot = new ArrayList<>();
     public ShotListAdapter adapter;
@@ -54,6 +57,8 @@ public class ShotListFragment extends SingleFragment {
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+     //   recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+     //    recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
         String token = getArguments().getString("Token");
         m_token = token;
         loadMoreTask = new ShotListAdapter.LoadMoreTask() {
@@ -92,7 +97,7 @@ public class ShotListFragment extends SingleFragment {
             sb.append("?");
             sb.append("access_token=");
             sb.append(m_token);
-            sb.append("&page=1");
+            sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
             Log.d("ShotQuery", sb.toString());
             String query = Uri.parse(sb.toString()).buildUpon().build().toString();
             try {
@@ -110,9 +115,10 @@ public class ShotListFragment extends SingleFragment {
         protected void onPostExecute(List<Shot> shots) {
             super.onPostExecute(shots);
             adapter.setData(shots);
+            adapter.setShowLoading(shots.size() == shotsPerPage);
         }
     }
-
+/*
     class RemoveTask extends AsyncTask<Void, Void, Void> {
         public String m_token;
         public Shot m_shot;
@@ -193,7 +199,7 @@ public class ShotListFragment extends SingleFragment {
                 }
             }
         }
-    }
+    }*/
 //    public void loadShots(final String token) {
 //        new Thread(new Runnable () {
 //            @Override

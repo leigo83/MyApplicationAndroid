@@ -9,32 +9,43 @@ public class Shot {
     public static final String IMAGE_NORMAL = "normal";
     public static final String IMAGE_HIDPI = "hidpi";
 
-    public boolean animated;
-    public String description;
-    public int height;
-    public int id;
-    public HashMap<String, String> images;
-    public boolean low_profile;
-    public List<String> tags;
-    public String title;
+    public String id;
+    public String created_at;
+    public String updated_at;
     public int width;
-    public String start;
-    public String end;
-    public List<String> attachments;
-    public List<String> projects;
-    public String video;
-//    public int view_count;
-//    public int likes_count;
-//    public int buckets_count;
+    public int height;
+    public String color;
+    public int likes;
+    public boolean liked_by_user;
+    public String description;
+    public User user;
+    public List<CurrentUserCollections> currentUserCollections;
+    HashMap<String, String> urls;
+    HashMap<String, String> links;
     public String getImageUrl() {
-        if (images == null) {
+        if (urls == null) {
             return null;
-        } else if (animated) {
-            return images.get(IMAGE_NORMAL);
         }
+        return urls.get("small") != null
+                ? urls.get("regular")
+                : urls.get("thumb");
+    }
 
-        return images.get(IMAGE_HIDPI) != null
-                ? images.get(IMAGE_HIDPI)
-                : images.get(IMAGE_NORMAL);
+    public class User {
+        public String id;
+        public String username;
+        public String name;
+        public String portfolio_url;
+        public String bio;
+        public String location;
+        public int total_likes;
+        public int total_photos;
+        public int total_collections;
+        public String instagram_username;
+        public String twitter_username;
+        HashMap<String, String> profile_image;
+        HashMap<String, String> links;
     }
 }
+
+

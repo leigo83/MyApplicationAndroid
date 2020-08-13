@@ -48,7 +48,7 @@ public class ShotFragment extends SingleFragment {
         EditText descript_edit = view.findViewById(R.id.descript_edit);
         EditText tag_edit = view.findViewById(R.id.tag_edit);
         ImageUtils.loadShotImage(shot, image);
-        title_edit.setText(shot.title);
+     /*   title_edit.setText(shot.title);
         descript_edit.setText(shot.description);
         StringBuilder sb = new StringBuilder ();
         for (int i = 0; i < shot.tags.size(); i++) {
@@ -125,7 +125,7 @@ public class ShotFragment extends SingleFragment {
                 String body = ModelUtils.toString(shot, new TypeToken<Shot>() {});
                 updateData(body);
             }
-        });
+        });*/
         return view;
     }
 
