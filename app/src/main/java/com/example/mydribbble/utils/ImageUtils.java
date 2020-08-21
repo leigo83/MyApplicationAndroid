@@ -6,8 +6,7 @@ import com.example.mydribbble.model.Shot;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 public class ImageUtils {
-    public static void loadShotImage(Shot shot, SimpleDraweeView imageView) {
-        String imageUrl = shot.getImageUrl();
+    public static void loadShotImage(String imageUrl, SimpleDraweeView imageView) {
         if (imageUrl != null) {
             Uri imageUri = Uri.parse(imageUrl);
             imageView.setImageURI(imageUri);

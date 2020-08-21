@@ -22,14 +22,6 @@ public class Shot {
     public List<CurrentUserCollections> currentUserCollections;
     HashMap<String, String> urls;
     HashMap<String, String> links;
-    public String getImageUrl() {
-        if (urls == null) {
-            return null;
-        }
-        return urls.get("small") != null
-                ? urls.get("regular")
-                : urls.get("thumb");
-    }
 
     public class User {
         public String id;
@@ -45,6 +37,15 @@ public class Shot {
         public String twitter_username;
         HashMap<String, String> profile_image;
         HashMap<String, String> links;
+    }
+
+    public String getImageUrl() {
+        if (urls == null) {
+            return null;
+        }
+        return urls.get("small") != null
+                ? urls.get("regular")
+                : urls.get("thumb");
     }
 }
 

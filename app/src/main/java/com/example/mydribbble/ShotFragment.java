@@ -15,8 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mydribbble.BaseClass.HttpAsyncLoad;
 import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Shot;
+import com.example.mydribbble.model.Shot2Detail;
+import com.example.mydribbble.model.ShotDetail;
 import com.example.mydribbble.utils.ImageUtils;
 import com.example.mydribbble.utils.ModelUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -24,9 +27,16 @@ import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.util.List;
+
+import okhttp3.Response;
+
 import static android.app.Activity.RESULT_OK;
 
 public class ShotFragment extends SingleFragment {
+    public static final String ShotLink = "https://api.unsplash.com/photos/";
+    public ShotDetail shotDetail;
     @Override
     protected Fragment createFragment() {
         return new ShotFragment();
@@ -40,14 +50,35 @@ public class ShotFragment extends SingleFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.shot_details, container, false);
-        String shot_str = getArguments().getString(ShotActivity.KEY_SHOT);
-        final Shot shot = ModelUtils.toObject(shot_str, new TypeToken<Shot>(){});
-        SimpleDraweeView image = view.findViewById(R.id.shot_image);
-        EditText title_edit = view.findViewById(R.id.title_edit);
-        EditText descript_edit = view.findViewById(R.id.descript_edit);
-        EditText tag_edit = view.findViewById(R.id.tag_edit);
-        ImageUtils.loadShotImage(shot, image);
+        final View view = inflater.inflate(R.layout.shot_details, container, false);
+        final Shot2Detail info = ModelUtils.toObject(getArguments().getString(ShotActivity.KEY_SHOT), new TypeToken<Shot2Detail>() {});
+        HttpAsyncLoad<ShotDetail> getInfo = new HttpAsyncLoad<ShotDetail>() {
+            @Override
+            public String createQuery() {
+                StringBuilder sb = new StringBuilder ();
+                sb.append(ShotLink);
+                sb.append(info.id);
+                sb.append("?");
+                sb.append("access_token=");
+                sb.append(info.token);
+                Log.d("ShotQuery", sb.toString());
+                return sb.toString();
+            }
+
+            @Override
+            protected void onPostExecute(Response response) {
+                super.onPostExecute(response);
+                try {
+                    shotDetail = (ShotDetail) this.parseResponse(response, new TypeToken<ShotDetail>() {});
+                    setViews(view);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                super.onPostExecute(response);
+            }
+        };
+        getInfo.execute();
+
      /*   title_edit.setText(shot.title);
         descript_edit.setText(shot.description);
         StringBuilder sb = new StringBuilder ();
@@ -127,6 +158,21 @@ public class ShotFragment extends SingleFragment {
             }
         });*/
         return view;
+    }
+
+    private void setViews(View view) {
+        SimpleDraweeView image = view.findViewById(R.id.shot_image);
+        EditText title_edit = view.findViewById(R.id.title_edit);
+        EditText descript_edit = view.findViewById(R.id.descript_edit);
+        EditText tag_edit = view.findViewById(R.id.tag_edit);
+        Log.d("ShotQuery", shotDetail.getImageUrl());
+
+     //   title_edit.setText(shotDetail.alt_description);
+        title_edit.setText(shotDetail.description);
+        title_edit.setText(shotDetail.links.html);
+        descript_edit.setText(Boolean.toString(shotDetail.liked_by_user));
+        tag_edit.setText(Integer.toString(shotDetail.downloads));
+        ImageUtils.loadShotImage(shotDetail.getImageUrl(), image);
     }
 
     private void updateData(String body) {

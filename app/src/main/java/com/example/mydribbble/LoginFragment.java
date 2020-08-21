@@ -43,15 +43,15 @@ public class LoginFragment extends SingleFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-         super.onCreateView(inflater, container, savedInstanceState);
-         View v = inflater.inflate(R.layout.login_fragment, container, false);
-         TextView text = (TextView)v.findViewById(R.id.login_button);
-         text.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 Intent intent = new Intent(getActivity(), AuthActivity.class);
-                 intent.putExtra(AUTHORIZE_URL, getAuthorizeUrl());
-                 startActivityForResult(intent, REQ_CODE);
+                     super.onCreateView(inflater, container, savedInstanceState);
+                     View v = inflater.inflate(R.layout.login_fragment, container, false);
+                     TextView text = (TextView)v.findViewById(R.id.login_button);
+                     text.setOnClickListener(new View.OnClickListener() {
+                         @Override
+                         public void onClick(View v) {
+                             Intent intent = new Intent(getActivity(), AuthActivity.class);
+                             intent.putExtra(AUTHORIZE_URL, getAuthorizeUrl());
+                             startActivityForResult(intent, REQ_CODE);
              }
          });
          return v;

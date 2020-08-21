@@ -1,5 +1,6 @@
 package com.example.mydribbble;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.example.mydribbble.BaseClass.HttpAsyncLoad;
 import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Shot;
 import com.example.mydribbble.utils.ModelUtils;
@@ -59,15 +61,43 @@ public class ShotListFragment extends SingleFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
      //   recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
      //    recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
-        String token = getArguments().getString("Token");
+        final String token = getArguments().getString("Token");
         m_token = token;
         loadMoreTask = new ShotListAdapter.LoadMoreTask() {
             @Override
             public void onLoadMore() {
-                new LoadMoreTaskAsync(m_token).execute();
+//               new LoadMoreTaskAsync(m_token).execute();
+                new HttpAsyncLoad<Shot>() {
+                    @SuppressLint("StaticFieldLeak")
+                    @Override
+                    public String createQuery() {
+                        StringBuilder sb = new StringBuilder ();
+                        sb.append(ShotLink);
+                        sb.append("?");
+                        sb.append("access_token=");
+                        sb.append(token);
+                        sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        Log.d("ShotQuery", sb.toString());
+                        return sb.toString();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Response response) {
+                        List<Shot> shots = null;
+                        try {
+                            shots = this.parseResponse(response, new TypeToken<List<Shot>>() {});
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        super.onPostExecute(response);
+                        adapter.setData(shots);
+                        adapter.setShowLoading(shots.size() == shotsPerPage);
+                        Log.d("ShotQuery","next" + shots.get(0).toString());
+                    }
+                }.execute();
             }
         };
-        adapter = new ShotListAdapter(this, dataShot, loadMoreTask);
+        adapter = new ShotListAdapter(this, dataShot, loadMoreTask, m_token);
         adapter.setShowLoading(true);
         recyclerView.setAdapter(adapter);
         return view;
@@ -103,7 +133,7 @@ public class ShotListFragment extends SingleFragment {
             try {
                 Response response = makeRequest(query);
                 List<Shot> loadedData = parseResponse(response, new TypeToken<List<Shot>>() {});
-      //          Log.d("num", Integer.toString(loadedData.size()));
+                //          Log.d("num", Integer.toString(loadedData.size()));
                 return loadedData;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -227,6 +257,7 @@ public class ShotListFragment extends SingleFragment {
     public Response makeRequest(String query) throws IOException {
         Request request = new Request.Builder().url(query).build();
         Response response =  client.newCall(request).execute();
+        Log.d("ShotQuery", response.toString());
         return response;
     }
 
