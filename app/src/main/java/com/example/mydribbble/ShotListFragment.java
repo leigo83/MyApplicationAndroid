@@ -67,7 +67,7 @@ public class ShotListFragment extends SingleFragment {
             @Override
             public void onLoadMore() {
 //               new LoadMoreTaskAsync(m_token).execute();
-                new HttpAsyncLoad<Shot>() {
+                new HttpAsyncLoad<Shot>(0) {
                     @SuppressLint("StaticFieldLeak")
                     @Override
                     public String createQuery() {
@@ -283,6 +283,26 @@ public class ShotListFragment extends SingleFragment {
         String responseString;
         responseString = response.body().string();
         return ModelUtils.toObject(responseString, typeToken);
+    }
+
+    public static void likeAction(int type, RequestBody postBody, final String id) {
+        new HttpAsyncLoad<Void>(type, postBody) {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            public String createQuery() {
+                StringBuilder sb = new StringBuilder ();
+                sb.append(ShotListFragment.ShotLink);
+                sb.append("/");
+                sb.append(id);
+                sb.append("/");
+                sb.append("like");
+                sb.append("?");
+                sb.append("access_token=");
+                sb.append(m_token);
+                Log.d("ShotQuery", sb.toString());
+                return sb.toString();
+            }
+        }.execute();
     }
 
 }

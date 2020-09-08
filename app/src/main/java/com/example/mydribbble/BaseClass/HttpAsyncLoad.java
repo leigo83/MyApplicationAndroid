@@ -25,9 +25,16 @@ import okhttp3.Response;
 
 public abstract class HttpAsyncLoad<T> extends AsyncTask<Void, Void, Response> {
     private OkHttpClient client = new OkHttpClient();
+    private int type;
+    private RequestBody requestBody;
 
-    public HttpAsyncLoad() {
+    public HttpAsyncLoad(int type) {
+        this.type = type;
+    }
 
+    public HttpAsyncLoad(int type, RequestBody requestBody) {
+        this.type = type;
+        this.requestBody = requestBody;
     }
 
     public abstract String createQuery();
@@ -36,7 +43,14 @@ public abstract class HttpAsyncLoad<T> extends AsyncTask<Void, Void, Response> {
     protected Response doInBackground(Void... voids) {
         String query = Uri.parse(createQuery()).buildUpon().build().toString();
         try {
-            Response response = makeRequest(query);
+            Response response = null;
+            if (type == 0) {
+                response = makeRequest(query);
+            } else if (type == 1) {
+                response = postRequest(query, this.requestBody);
+            } else if (type == 2) {
+                response = deleteRequest(query, null);
+            }
             return response;
         } catch (IOException e) {
             e.printStackTrace();

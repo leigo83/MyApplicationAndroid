@@ -23,40 +23,83 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content">
-        <TextView
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/user_image"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:paddingLeft="16dp"
+                fresco:placeholderImageScaleType="centerCrop"/>
+            <TextView
+                android:id="@+id/shot_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_person_24px"
+                android:textSize="20dp"
+                android:textColor="@color/colorPrimary"
+                android:paddingLeft="16dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <TextView
             android:id="@+id/shot_view_count"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_visibility_24px"
             android:textSize="20dp"
             android:textColor="@color/colorPrimary"
-            android:paddingLeft="8dp"/>
+            android:paddingLeft="16dp"/>
         <TextView
-            android:id="@+id/shot_like_count"
-            android:layout_width="wrap_content"
+            android:id="@+id/shot_download_count"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_get_app_24px"
             android:textSize="20dp"
             android:textColor="@color/colorPrimary"
-            android:gravity="center"/>
-        <TextView
-            android:id="@+id/shot_bucket_count"
-            android:layout_width="wrap_content"
+            android:paddingLeft="16dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:textSize="20dp"
-            android:textColor="@color/colorPrimary"
-            android:paddingRight="8dp"/>
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/shot_dislike_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_favorite_border_24px"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:paddingLeft="16dp"/>
+            <ImageButton
+                android:id="@+id/shot_like_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_favorite_24px"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:paddingLeft="16dp"/>
+            <TextView
+                android:id="@+id/shot_like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="@color/colorPrimary"/>
+        </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
     <View
         android:id="@+id/shot_clickable_cover"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="240dp"
         android:clickable="true">
     </View>
 </androidx.cardview.widget.CardView>

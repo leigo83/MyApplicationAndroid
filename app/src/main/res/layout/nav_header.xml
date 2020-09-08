@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/nav_header_user_picture"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"/>
+    <TextView
+        android:id="@+id/nav_header_user_name"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignTop="@id/nav_header_user_picture"
+        android:layout_toRightOf="@id/nav_header_user_picture">
+    </TextView>
+    <TextView
+        android:id="@+id/nav_header_logout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/nav_header_user_name"
+        android:layout_toRightOf="@id/nav_header_user_picture"
+        android:text="Logout">
+    </TextView>
+
+</RelativeLayout>

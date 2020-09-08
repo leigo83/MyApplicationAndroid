@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mydribbble.BaseActivity.SingleFragmentActivity;
 import com.example.mydribbble.model.Shot;
 import com.example.mydribbble.model.Shot2Detail;
 import com.example.mydribbble.utils.ImageUtils;
@@ -16,6 +18,9 @@ import com.example.mydribbble.utils.ModelUtils;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 public class ShotListAdapter extends RecyclerView.Adapter<ShotListViewHolder> {
     private static final int VIEW_TYPE_SHOT = 1;
@@ -44,15 +49,49 @@ public class ShotListAdapter extends RecyclerView.Adapter<ShotListViewHolder> {
             Log.d("ShotQuery", "loading");
             loadMoreTask.onLoadMore();
         } else {
-            ShotListViewHolder shotListViewHolder = (ShotListViewHolder) holder;
+            final ShotListViewHolder shotListViewHolder = (ShotListViewHolder) holder;
             final Shot shot = data.get(position);
             final String id = shot.id;
-            shotListViewHolder.shot_view_count.setText(shot.user.username);
+            shotListViewHolder.shot_user.setText(shot.user.name);
             shotListViewHolder.shot_like_count.setText(String.valueOf(shot.likes));
-            //   shotListViewHolder.shot_like_count.setText(String.valueOf(shot.description));
-            //shotListViewHolder.shot_bucket_count.setText(String.valueOf(Integer.toString(shot.width) + "x" + Integer.toString(shot.height)));
-            shotListViewHolder.shot_bucket_count.setText(shot.user.name);
+            shotListViewHolder.shot_download_count.setText(String.valueOf(shot.likes));
+            shotListViewHolder.shot_view_count.setText(String.valueOf(shot.likes));
             ImageUtils.loadShotImage(shot.getImageUrl(), shotListViewHolder.image);
+            Log.d("ShotQuery", "liked by the user" + shot.liked_by_user);
+            //Log.d("ShotQuery", String.valueOf(shot.user.profile_image.get("small")));
+            ImageUtils.loadShotImage(shot.getUserImageUrl(), shotListViewHolder.user_image);
+
+            if (shot.liked_by_user) {
+                shotListViewHolder.shot_dislike_action.setVisibility(View.GONE);
+                shotListViewHolder.shot_like_action.setVisibility(View.VISIBLE);
+            } else {
+                shotListViewHolder.shot_like_action.setVisibility(View.GONE);
+                shotListViewHolder.shot_dislike_action.setVisibility(View.VISIBLE);
+            }
+
+
+            shotListViewHolder.shot_like_action.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shotListViewHolder.shot_like_action.setVisibility(View.GONE);
+                    shotListViewHolder.shot_dislike_action.setVisibility(View.VISIBLE);
+                    shot.liked_by_user = !shot.liked_by_user;
+                    ShotListFragment.likeAction(2, null, id);
+                }
+            });
+
+            shotListViewHolder.shot_dislike_action.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shotListViewHolder.shot_dislike_action.setVisibility(View.GONE);
+                    shotListViewHolder.shot_like_action.setVisibility(View.VISIBLE);
+                    shot.liked_by_user =!shot.liked_by_user;
+                    RequestBody postBody = new FormBody.Builder().add("id", shot.id).build();
+                    ShotListFragment.likeAction(1, postBody, id);
+                }
+            });
+
+
             shotListViewHolder.cover.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

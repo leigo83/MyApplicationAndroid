@@ -1,15 +1,20 @@
 package com.example.mydribbble;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +25,7 @@ import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Shot;
 import com.example.mydribbble.model.Shot2Detail;
 import com.example.mydribbble.model.ShotDetail;
+import com.example.mydribbble.model.User;
 import com.example.mydribbble.utils.ImageUtils;
 import com.example.mydribbble.utils.ModelUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -30,13 +36,17 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 
 public class ShotFragment extends SingleFragment {
     public static final String ShotLink = "https://api.unsplash.com/photos/";
+    public static final String UserLink = "https://api.unsplash.com/users/";
     public ShotDetail shotDetail;
+    public String m_token;
     @Override
     protected Fragment createFragment() {
         return new ShotFragment();
@@ -52,7 +62,8 @@ public class ShotFragment extends SingleFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View view = inflater.inflate(R.layout.shot_details, container, false);
         final Shot2Detail info = ModelUtils.toObject(getArguments().getString(ShotActivity.KEY_SHOT), new TypeToken<Shot2Detail>() {});
-        HttpAsyncLoad<ShotDetail> getInfo = new HttpAsyncLoad<ShotDetail>() {
+        m_token = info.token;
+        HttpAsyncLoad<ShotDetail> getInfo = new HttpAsyncLoad<ShotDetail>(0) {
             @Override
             public String createQuery() {
                 StringBuilder sb = new StringBuilder ();
@@ -162,16 +173,92 @@ public class ShotFragment extends SingleFragment {
 
     private void setViews(View view) {
         SimpleDraweeView image = view.findViewById(R.id.shot_image);
-        EditText title_edit = view.findViewById(R.id.title_edit);
-        EditText descript_edit = view.findViewById(R.id.descript_edit);
-        EditText tag_edit = view.findViewById(R.id.tag_edit);
-        Log.d("ShotQuery", shotDetail.getImageUrl());
+        final TextView likes = view.findViewById(R.id.likes);
+        final TextView dislikes = view.findViewById(R.id.dislikes);
+        TextView username = view.findViewById(R.id.username);
+        TextView download = view.findViewById(R.id.shotdetail_download);
+        TextView location = view.findViewById(R.id.location);
+        TextView name = view.findViewById(R.id.name);
+        TextView description = view.findViewById(R.id.description);
+        TextView camera = view.findViewById(R.id.camera);
+        TextView ownedPhotos = view.findViewById(R.id.ownedPhotos);
 
-     //   title_edit.setText(shotDetail.alt_description);
-        title_edit.setText(shotDetail.description);
-        title_edit.setText(shotDetail.links.html);
-        descript_edit.setText(Boolean.toString(shotDetail.liked_by_user));
-        tag_edit.setText(Integer.toString(shotDetail.downloads));
+        Log.d("ShotQuery", String.valueOf(shotDetail.downloads));
+        if (shotDetail.liked_by_user) {
+            likes.setVisibility(View.VISIBLE);
+            dislikes.setVisibility(View.GONE);
+            likes.setText(String.valueOf(shotDetail.likes));
+        } else {
+            likes.setVisibility(View.GONE);
+            dislikes.setVisibility(View.VISIBLE);
+            dislikes.setText(String.valueOf(shotDetail.likes));
+        }
+        likes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                likes.setVisibility(View.GONE);
+                dislikes.setVisibility(View.VISIBLE);
+                dislikes.setText(String.valueOf(shotDetail.likes));
+                ShotListFragment.likeAction(2, null, shotDetail.id);
+            }
+        });
+        dislikes.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dislikes.setVisibility(View.GONE);
+                likes.setVisibility(View.VISIBLE);
+                likes.setText(String.valueOf(shotDetail.likes));
+                RequestBody postBody = new FormBody.Builder().add("id", shotDetail.id).build();
+                ShotListFragment.likeAction(1, postBody, shotDetail.id);
+            }
+        });
+        download.setText(String.valueOf(shotDetail.downloads));
+        SpannableString content = new SpannableString(shotDetail.user.username);
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        username.setText(content);
+        username.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                new HttpAsyncLoad<User>(0) {
+                    @Override
+                    protected void onPostExecute(Response response) {
+                        super.onPostExecute(response);
+                        try {
+                            User user = (User)this.parseResponse(response, new TypeToken<User>(){});
+                            Intent intent = new Intent(getContext(), UserActivity.class);
+                            intent.putExtra(UserActivity.USERINFO, ModelUtils.toString(user, new TypeToken<User>(){}));
+                            startActivity(intent);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public String createQuery() {
+                        StringBuilder sb = new StringBuilder ();
+                        sb.append(UserLink);
+                        sb.append(shotDetail.user.username);
+                        sb.append("?");
+                        sb.append("access_token=");
+                        sb.append(m_token);
+                        return sb.toString();
+                    }
+                }.execute();
+            }
+        });
+        name.setText("Name: " + shotDetail.user.name);
+        description.setText("Description: " + shotDetail.description);
+        ownedPhotos.setText("OwnedPhotos: " + shotDetail.user.total_photos);
+        if (shotDetail.location.city != null && shotDetail.location.country != null) {
+            location.setText("Location: " + shotDetail.location.city + ", " + shotDetail.location.country);
+        }
+        if (shotDetail.exif.make != null && shotDetail.exif.model != null) {
+            camera.setText("Camera Make/Model: " + shotDetail.exif.make + "/" + shotDetail.exif.model);
+        }
+
+
         ImageUtils.loadShotImage(shotDetail.getImageUrl(), image);
     }
 

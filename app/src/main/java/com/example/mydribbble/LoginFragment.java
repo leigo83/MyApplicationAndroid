@@ -13,7 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mydribbble.BaseClass.HttpAsyncLoad;
 import com.example.mydribbble.BaseFragment.SingleFragment;
+import com.example.mydribbble.model.User;
+import com.example.mydribbble.utils.ModelUtils;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,11 +93,36 @@ public class LoginFragment extends SingleFragment {
                 @Override
                 public void run() {
                     try {
-                        String token = getTokens(authorCode);
-                        Intent intent = new Intent (getActivity(), ShotListActivity.class);
+                        final String token = getTokens(authorCode);
+               //         Intent intent = new Intent (getActivity(), ShotListActivity.class);
+                        final Intent intent = new Intent (getActivity(), EntranceActivity.class);
                         intent.putExtra(ACCESS_TOKEN, token);
-                        startActivity(intent);
-                        getActivity().finish();
+                        new HttpAsyncLoad<User>(0) {
+                            @Override
+                            protected void onPostExecute(Response response) {
+                                super.onPostExecute(response);
+                                try {
+                                    User user = (User)this.parseResponse(response, new TypeToken<User>(){});
+                                    intent.putExtra(UserActivity.USERINFO, ModelUtils.toString(user, new TypeToken<User>(){}));
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public String createQuery() {
+                                StringBuilder sb = new StringBuilder ();
+                                sb.append("https://api.unsplash.com/me");
+                                sb.append("?");
+                                sb.append("access_token=");
+                                sb.append(token);
+                                return sb.toString();
+                            }
+                        }.execute();
+//                        startActivity(intent);
+//                        getActivity().finish();
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }

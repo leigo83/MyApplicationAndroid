@@ -35,8 +35,8 @@ public class Shot {
         public int total_collections;
         public String instagram_username;
         public String twitter_username;
-        HashMap<String, String> profile_image;
-        HashMap<String, String> links;
+        public HashMap<String, String> profile_image;
+        public HashMap<String, String> links;
     }
 
     public String getImageUrl() {
@@ -46,6 +46,15 @@ public class Shot {
         return urls.get("small") != null
                 ? urls.get("regular")
                 : urls.get("thumb");
+    }
+
+    public String getUserImageUrl() {
+        if (this.user.profile_image.size() == 0) {
+            return null;
+        }
+        return this.user.profile_image.get("small") != null
+                ? this.user.profile_image.get("medium")
+                : this.user.profile_image.get("large");
     }
 }
 
