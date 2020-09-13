@@ -43,7 +43,7 @@ public class EntranceActivity extends AppCompatActivity {
         m_token = intent.getStringExtra(LoginFragment.ACCESS_TOKEN);
     //    m_user = ModelUtils.toObject(intent.getStringExtra(UserActivity.USERINFO), new TypeToken<User>(){});
         m_user = intent.getStringExtra(UserActivity.USERINFO);
-        setTitle("Unsplash");
+        setTitle("Unsplash-Photos");
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -93,7 +93,7 @@ public class EntranceActivity extends AppCompatActivity {
                         fragment = ShotListFragment.createInstance();
                         bundle.putString("Token", m_token);
                         fragment.setArguments(bundle);
-                        setTitle("Unsplash");
+                        setTitle("Unsplash-Photos");
                         break;
                     case R.id.drawer_item_profile:
                         fragment = UserFragment.createInstance();
@@ -101,6 +101,12 @@ public class EntranceActivity extends AppCompatActivity {
          //               bundle.putString(UserActivity.USERINFO, ModelUtils.toString(m_user, new TypeToken<User>(){}));
                         fragment.setArguments(bundle);
                         setTitle("Profile");
+                        break;
+                    case R.id.drawer_item_collections:
+                        fragment = CollectionListFragment.createInstance();
+                        bundle.putString("Token", m_token);
+                        fragment.setArguments(bundle);
+                        setTitle("Unsplash-Collections");
                         break;
                 }
 

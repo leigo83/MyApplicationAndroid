@@ -97,7 +97,7 @@ public class ShotListFragment extends SingleFragment {
                 }.execute();
             }
         };
-        adapter = new ShotListAdapter(this, dataShot, loadMoreTask, m_token);
+        adapter = new ShotListAdapter(this, dataShot, loadMoreTask, m_token, Shot.class, ShotListViewHolder.class);
         adapter.setShowLoading(true);
         recyclerView.setAdapter(adapter);
         return view;
