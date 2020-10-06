@@ -52,4 +52,22 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content">
     </TextView>
+    <Button
+        android:id="@+id/user_photos"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:clickable="true">
+    </Button>
+    <Button
+        android:id="@+id/user_liked_photos"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:clickable="true">
+    </Button>
+    <Button
+        android:id="@+id/user_collections"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:clickable="true">
+    </Button>
 </LinearLayout>

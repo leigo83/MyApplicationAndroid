@@ -14,5 +14,9 @@
             android:id="@+id/drawer_item_collections"
             android:title="COLLECTIONS">
         </item>
+        <item
+            android:id="@+id/drawer_create_collection"
+            android:title="CREATE_COLLECTION">
+        </item>
     </group>
 </menu>

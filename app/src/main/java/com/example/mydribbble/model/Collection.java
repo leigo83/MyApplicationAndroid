@@ -16,6 +16,7 @@ public class Collection {
     public HashMap<String, String> links;
 
     public String getImageUrl() {
+        if (cover_photo == null) return null;
         if (cover_photo.urls == null) {
             return null;
         }

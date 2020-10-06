@@ -73,6 +73,7 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
         if (type == VIEW_TYPE_LOADING) {
             loadMoreTask.onLoadMore();
         } else {
+            if (data.size() == 0) return;
             if (tpClass1 == Shot.class) {
                 final ShotListViewHolder shotListViewHolder = (ShotListViewHolder) holder;
                 final Shot shot = (Shot)data.get(position);
@@ -120,8 +121,7 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(shotListFragment.getActivity(), ShotActivity.class);
-                        String info = ModelUtils.toString(new Shot2Detail(m_token, id), new TypeToken<Shot2Detail>() {
-                        });
+                        String info = ModelUtils.toString(new Shot2Detail(m_token, id), new TypeToken<Shot2Detail>() {});
                         intent.putExtra(ShotActivity.KEY_SHOT, info);
                         shotListFragment.startActivityForResult(intent, ((ShotListFragment)shotListFragment).REQ_SHOT_CODE);
                     }
@@ -137,7 +137,22 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
                 collectionListViewHolder.cover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(shotListFragment.getContext(), "clicked!", Toast.LENGTH_LONG);
+                        Intent intent = new Intent(shotListFragment.getActivity(), ShotListActivity.class);
+                        intent.putExtra(LoginFragment.ACCESS_TOKEN, m_token);
+                        intent.putExtra(CollectionListFragment.COLLECTIONID, id);
+                        shotListFragment.startActivity(intent);
+                        shotListFragment.getActivity().finish();
+                    }
+                });
+                if (!collection.user.username.equals(Unsplash.username)) {
+                    collectionListViewHolder.editButton.setVisibility(View.GONE);
+                }
+                collectionListViewHolder.editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(shotListFragment.getActivity(), CollectionEditActivity.class);
+                        intent.putExtra(CollectionListFragment.COLLECTIONINFO, ModelUtils.toString(collection, new TypeToken<Collection>() {}));
+                        shotListFragment.startActivityForResult(intent, CollectionListFragment.REQ_CODE);
                     }
                 });
             }

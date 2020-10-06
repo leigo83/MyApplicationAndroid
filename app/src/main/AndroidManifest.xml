@@ -28,5 +28,7 @@
         <activity android:name='.ShotActivity'></activity>
         <activity android:name='.UserActivity'></activity>
         <activity android:name=".UploadImageActivity"></activity>
+        <activity android:name=".CollectionListActivity"></activity>
+        <activity android:name=".CollectionEditActivity"></activity>
     </application>
 </manifest>

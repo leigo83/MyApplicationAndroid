@@ -50,6 +50,8 @@ public abstract class HttpAsyncLoad<T> extends AsyncTask<Void, Void, Response> {
                 response = postRequest(query, this.requestBody);
             } else if (type == 2) {
                 response = deleteRequest(query, null);
+            } else if (type == 3) {
+                response = putRequest(query, this.requestBody);
             }
             return response;
         } catch (IOException e) {
@@ -78,6 +80,7 @@ public abstract class HttpAsyncLoad<T> extends AsyncTask<Void, Void, Response> {
 
     public Response postRequest(String url, RequestBody requestBody) throws IOException {
         Request request = new Request.Builder().url(url).post(requestBody).build();
+        Log.d("ShotQuery", request.toString());
         Response response = client.newCall(request).execute();
         return response;
     }

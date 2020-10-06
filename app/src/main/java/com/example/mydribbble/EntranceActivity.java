@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.example.mydribbble.BaseActivity.SingleFragmentActivity;
 import com.example.mydribbble.model.User;
 import com.example.mydribbble.utils.ImageUtils;
 import com.example.mydribbble.utils.ModelUtils;
@@ -41,7 +40,7 @@ public class EntranceActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         Intent intent = getIntent();
         m_token = intent.getStringExtra(LoginFragment.ACCESS_TOKEN);
-    //    m_user = ModelUtils.toObject(intent.getStringExtra(UserActivity.USERINFO), new TypeToken<User>(){});
+        Unsplash.token = m_token;
         m_user = intent.getStringExtra(UserActivity.USERINFO);
         setTitle("Unsplash-Photos");
 
@@ -66,6 +65,7 @@ public class EntranceActivity extends AppCompatActivity {
 
         View headerView = navigationView.getHeaderView(0);
         User user = ModelUtils.toObject(m_user, new TypeToken<User>(){});
+        Unsplash.username = user.username;
         SimpleDraweeView image = headerView.findViewById(R.id.nav_header_user_picture);
         ImageUtils.loadShotImage(user.getUserImageUrl(), image);
         ((TextView)headerView.findViewById(R.id.nav_header_user_name)).setText(user.name);
@@ -108,12 +108,18 @@ public class EntranceActivity extends AppCompatActivity {
                         fragment.setArguments(bundle);
                         setTitle("Unsplash-Collections");
                         break;
+                    case R.id.drawer_create_collection:
+                        fragment = CreateCollectionFragment.createInstance();
+                        bundle.putString("Token", m_token);
+                        fragment.setArguments(bundle);
+                        setTitle("Create new collection");
+                        break;
                 }
 
                 drawerLayout.closeDrawers();
 
                 if (fragment != null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
                     return true;
                 }
                 return false;

@@ -42,10 +42,15 @@ public class Shot {
     public String getImageUrl() {
         if (urls == null) {
             return null;
+        } else if (urls.size() == 0) {
+            return null;
         }
-        return urls.get("small") != null
+        if (!urls.containsKey("small") && !urls.containsKey("regular")) {
+            return null;
+        }
+        return urls.get("regular") != null
                 ? urls.get("regular")
-                : urls.get("thumb");
+                : urls.get("small");
     }
 
     public String getUserImageUrl() {

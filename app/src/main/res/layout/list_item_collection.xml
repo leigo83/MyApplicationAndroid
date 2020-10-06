@@ -46,12 +46,23 @@
                     android:textColor="@color/colorPrimary"
                     android:paddingLeft="16dp"/>
             </LinearLayout>
-            <TextView
-                android:id="@+id/collection_title"
+            <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_gravity="center">
-            </TextView>
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/collection_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_edit_24px">
+                </ImageButton>
+                <TextView
+                    android:id="@+id/collection_title"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center">
+                </TextView>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
     <View

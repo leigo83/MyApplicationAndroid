@@ -45,6 +45,8 @@ public class ShotListFragment extends SingleFragment {
     public static final int REQ_SHOT_CODE = 100;
     public static final String SHOT_DATA_KEY = "SHOT_KEY";
     public static final String ShotLink = "https://api.unsplash.com/photos";
+    public static final String CollectionLink = "https://api.unsplash.com/collections/";
+    public static final String UserLink = "https://api.unsplash.com/users/";
     public static final String ShotLinkSingle = "https://api.dribbble.com/v2/shots/";
     public static final int shotsPerPage = 10;
     public RecyclerView recyclerView;
@@ -62,6 +64,8 @@ public class ShotListFragment extends SingleFragment {
      //   recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
      //    recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
         final String token = getArguments().getString("Token");
+        final String collection_id = getArguments().getString("CollectionId");
+        final String userfeature = getArguments().getString("Userfeature");
         m_token = token;
         loadMoreTask = new ShotListAdapter.LoadMoreTask() {
             @Override
@@ -72,11 +76,28 @@ public class ShotListFragment extends SingleFragment {
                     @Override
                     public String createQuery() {
                         StringBuilder sb = new StringBuilder ();
-                        sb.append(ShotLink);
-                        sb.append("?");
-                        sb.append("access_token=");
-                        sb.append(token);
-                        sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        if (collection_id != null) {
+                            sb.append(CollectionLink);
+                            sb.append(collection_id);
+                            sb.append("/photos");
+                            sb.append("?");
+                            sb.append("access_token=");
+                            sb.append(token);
+                            sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        } else if (userfeature != null) {
+                            sb.append(UserLink);
+                            sb.append(userfeature);
+                            sb.append("?");
+                            sb.append("access_token=");
+                            sb.append(token);
+                            sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        } else {
+                                sb.append(ShotLink);
+                                sb.append("?");
+                                sb.append("access_token=");
+                                sb.append(token);
+                                sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        }
                         Log.d("ShotQuery", sb.toString());
                         return sb.toString();
                     }
@@ -92,7 +113,7 @@ public class ShotListFragment extends SingleFragment {
                         super.onPostExecute(response);
                         adapter.setData(shots);
                         adapter.setShowLoading(shots.size() == shotsPerPage);
-                        Log.d("ShotQuery","next" + shots.get(0).toString());
+                        if (shots.size() > 0) Log.d("ShotQuery","next" + shots.get(0).toString());
                     }
                 }.execute();
             }
