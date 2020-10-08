@@ -15,9 +15,11 @@ public class ShotListActivity extends SingleFragmentActivity {
         String token = Unsplash.token;//intent.getStringExtra(LoginFragment.ACCESS_TOKEN);
         String collectionId = intent.getStringExtra(CollectionListFragment.COLLECTIONID);
         String userfeature = intent.getStringExtra(UserFragment.USER_FEATURE);
+        String collectionUsername = intent.getStringExtra(CollectionListFragment.COLLECTIONUSERNAME);
         bundle.putString("Token", token);
         bundle.putString("CollectionId", collectionId);
         bundle.putString("Userfeature", userfeature);
+        bundle.putString(CollectionListFragment.COLLECTIONUSERNAME, collectionUsername);
         Fragment fragment = ShotListFragment.createInstance();
         fragment.setArguments(bundle);
         return fragment;

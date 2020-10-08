@@ -14,6 +14,8 @@ public class ShotActivity extends SingleFragmentActivity {
         Intent intent = getIntent();
         Bundle bundle = new Bundle();
         bundle.putString(KEY_SHOT, intent.getStringExtra(KEY_SHOT));
+        bundle.putString(CollectionListFragment.COLLECTIONUSERNAME, intent.getStringExtra(CollectionListFragment.COLLECTIONUSERNAME));
+        bundle.putString(CollectionListFragment.COLLECTIONID, intent.getStringExtra(CollectionListFragment.COLLECTIONID));
         Fragment shotFragment = ShotFragment.createInstance();
         shotFragment.setArguments(bundle);
         return shotFragment;

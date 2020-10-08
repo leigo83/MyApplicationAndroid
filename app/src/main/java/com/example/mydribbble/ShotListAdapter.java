@@ -123,6 +123,8 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
                         Intent intent = new Intent(shotListFragment.getActivity(), ShotActivity.class);
                         String info = ModelUtils.toString(new Shot2Detail(m_token, id), new TypeToken<Shot2Detail>() {});
                         intent.putExtra(ShotActivity.KEY_SHOT, info);
+                        intent.putExtra(CollectionListFragment.COLLECTIONID, ((ShotListFragment)shotListFragment).collection_id);
+                        intent.putExtra(CollectionListFragment.COLLECTIONUSERNAME, ((ShotListFragment)shotListFragment).collection_username);
                         shotListFragment.startActivityForResult(intent, ((ShotListFragment)shotListFragment).REQ_SHOT_CODE);
                     }
                 });
@@ -140,8 +142,8 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
                         Intent intent = new Intent(shotListFragment.getActivity(), ShotListActivity.class);
                         intent.putExtra(LoginFragment.ACCESS_TOKEN, m_token);
                         intent.putExtra(CollectionListFragment.COLLECTIONID, id);
+                        intent.putExtra(CollectionListFragment.COLLECTIONUSERNAME, collection.user.username);
                         shotListFragment.startActivity(intent);
-                        shotListFragment.getActivity().finish();
                     }
                 });
                 if (!collection.user.username.equals(Unsplash.username)) {

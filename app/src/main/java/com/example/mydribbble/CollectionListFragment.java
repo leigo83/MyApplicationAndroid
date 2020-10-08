@@ -36,6 +36,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class CollectionListFragment extends SingleFragment {
     public static String COLLECTIONID = "collection_id";
+    public static String COLLECTIONUSERNAME = "collection_username";
     public static String COLLECTIONINFO = "collection_info";
     public static final int REQ_SHOT_CODE = 100;
     public static final String SHOT_DATA_KEY = "SHOT_KEY";

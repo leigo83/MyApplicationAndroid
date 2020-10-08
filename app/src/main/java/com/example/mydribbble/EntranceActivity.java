@@ -1,7 +1,9 @@
 package com.example.mydribbble;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.mydribbble.BaseClass.HttpAsyncLoad;
+import com.example.mydribbble.model.Collection;
 import com.example.mydribbble.model.User;
 import com.example.mydribbble.utils.ImageUtils;
 import com.example.mydribbble.utils.ModelUtils;
@@ -22,6 +26,12 @@ import com.google.gson.reflect.TypeToken;
 
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Semaphore;
+
+import okhttp3.Response;
+
 
 public class EntranceActivity extends AppCompatActivity {
     private String m_token;
@@ -29,7 +39,6 @@ public class EntranceActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-
     private ActionBarDrawerToggle drawerToggle;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +86,60 @@ public class EntranceActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        new Thread(new Runnable() {
+            private boolean collectionsRd;
+            private Semaphore m1;
+            @Override
+            public void run() {
+                collectionsRd = true;
+                m1 = new Semaphore(1);
+                while (true) {
+                    try {
+                        m1.acquire();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (!collectionsRd) break;
+                    new HttpAsyncLoad<Collection>(0) {
+                        @SuppressLint("StaticFieldLeak")
+                        @Override
+                        public String createQuery() {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("https://api.unsplash.com/users/");
+                            sb.append(Unsplash.username);
+                            sb.append("/collections");
+                            sb.append("?");
+                            sb.append("access_token=");
+                            sb.append(Unsplash.token);
+                            sb.append("&page=" + Integer.toString(Unsplash.dict_collections.size() / CollectionListFragment.shotsPerPage + 1));
+                            Log.d("ShotQuery", sb.toString());
+                            return sb.toString();
+                        }
+
+                        @Override
+                        protected void onPostExecute(Response response) {
+                            List<Collection> shots = null;
+                            try {
+                                shots = this.parseResponse(response, new TypeToken<List<Collection>>() {});
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            super.onPostExecute(response);
+                            for (int i = 0; i < shots.size(); i++) {
+                                Unsplash.dict_collections.put(shots.get(i).id, shots.get(i).title);
+                            }
+                            if (shots.size() != CollectionListFragment.shotsPerPage) {
+                                collectionsRd = false;
+                            }
+                            Log.d("ShotQuery", "reached here " + Unsplash.dict_collections.size());
+                            m1.release();
+                        }
+                    }.execute();
+                }
+            }
+        }).start();
+
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

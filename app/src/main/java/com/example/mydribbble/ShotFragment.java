@@ -1,5 +1,6 @@
 package com.example.mydribbble;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,10 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +40,8 @@ import com.google.gson.reflect.TypeToken;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -45,8 +53,12 @@ import static android.app.Activity.RESULT_OK;
 public class ShotFragment extends SingleFragment {
     public static final String ShotLink = "https://api.unsplash.com/photos/";
     public static final String UserLink = "https://api.unsplash.com/users/";
+    public static final String CollectionLink = "https://api.unsplash.com/collections/";
     public ShotDetail shotDetail;
     public String m_token;
+    private String collectionId;
+    private String photoId;
+    private Context context = this.getContext();
     @Override
     protected Fragment createFragment() {
         return new ShotFragment();
@@ -182,6 +194,14 @@ public class ShotFragment extends SingleFragment {
         TextView description = view.findViewById(R.id.description);
         TextView camera = view.findViewById(R.id.camera);
         TextView ownedPhotos = view.findViewById(R.id.ownedPhotos);
+        Button delete = view.findViewById(R.id.remove_photo);
+        LinearLayout group = view.findViewById(R.id.add_photo_group);
+        String collectionUserName = getArguments().getString(CollectionListFragment.COLLECTIONUSERNAME);
+        collectionId = getArguments().getString(CollectionListFragment.COLLECTIONID);
+        if (collectionUserName.equals(Unsplash.username)) {
+            group.setVisibility(View.GONE);
+            delete.setVisibility(View.VISIBLE);
+        }
 
         Log.d("ShotQuery", String.valueOf(shotDetail.downloads));
         if (shotDetail.liked_by_user) {
@@ -260,6 +280,90 @@ public class ShotFragment extends SingleFragment {
 
 
         ImageUtils.loadShotImage(shotDetail.getImageUrl(), image);
+
+        Spinner spin = view.findViewById(R.id.spinner);
+        final List<String> myCollections = new ArrayList<>();
+        final HashMap<Integer, String> mapping = new HashMap<> ();
+        myCollections.add("");
+        for (HashMap.Entry<String, String> entry : Unsplash.dict_collections.entrySet()) {
+            String key = entry.getKey();
+            mapping.put(myCollections.size(), key);
+            myCollections.add(entry.getValue());
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, myCollections);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(dataAdapter);
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                collectionId = mapping.get(position);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        Button submit = view.findViewById(R.id.add_photo);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photoId = shotDetail.id;
+                RequestBody postBody = new FormBody.Builder()
+                        .add("access_token", m_token)
+                        .add("collection_id", collectionId)
+                        .add("photo_id", photoId).build();
+                Log.d("ShotQuery", postBody.toString());
+                new HttpAsyncLoad<User>(1, postBody) {
+                    @Override
+                    protected void onPostExecute(Response response) {
+       //                 Toast.makeText(context, "Added!", Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public String createQuery() {
+                        StringBuilder sb = new StringBuilder ();
+                        sb.append(CollectionLink);
+                        sb.append(collectionId);
+                        sb.append("/add");
+                        Log.d("ShotQuery", sb.toString());
+                        return sb.toString();
+                    }
+                }.execute();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photoId = shotDetail.id;
+                new HttpAsyncLoad<User>(2) {
+                    @Override
+                    protected void onPostExecute(Response response) {
+                        //                 Toast.makeText(context, "Added!", Toast.LENGTH_LONG);
+                        getActivity().finish();
+                    }
+
+                    @Override
+                    public String createQuery() {
+                        StringBuilder sb = new StringBuilder ();
+                        sb.append(CollectionLink);
+                        sb.append(collectionId);
+                        sb.append("/remove");
+                        sb.append("?");
+                        sb.append("access_token=" + m_token);
+                        sb.append("&collection_id=" + collectionId);
+                        sb.append("&photo_id=" + photoId);
+                        Log.d("ShotQuery", sb.toString());
+                        return sb.toString();
+                    }
+                }.execute();
+            }
+        });
+
     }
 
     private void updateData(String body) {

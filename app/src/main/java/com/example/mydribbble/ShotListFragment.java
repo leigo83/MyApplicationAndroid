@@ -52,6 +52,8 @@ public class ShotListFragment extends SingleFragment {
     public RecyclerView recyclerView;
     List<Shot> dataShot = new ArrayList<>();
     public ShotListAdapter adapter;
+    public String collection_username = null;
+    public String collection_id = null;
     private static OkHttpClient client = new OkHttpClient();
     public static String m_token;
     private ShotListAdapter.LoadMoreTask loadMoreTask;
@@ -64,8 +66,9 @@ public class ShotListFragment extends SingleFragment {
      //   recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
      //    recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
         final String token = getArguments().getString("Token");
-        final String collection_id = getArguments().getString("CollectionId");
         final String userfeature = getArguments().getString("Userfeature");
+        collection_username = getArguments().getString(CollectionListFragment.COLLECTIONUSERNAME);
+        collection_id = getArguments().getString("CollectionId");;
         m_token = token;
         loadMoreTask = new ShotListAdapter.LoadMoreTask() {
             @Override
