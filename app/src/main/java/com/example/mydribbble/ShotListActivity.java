@@ -20,6 +20,7 @@ public class ShotListActivity extends SingleFragmentActivity {
         bundle.putString("CollectionId", collectionId);
         bundle.putString("Userfeature", userfeature);
         bundle.putString(CollectionListFragment.COLLECTIONUSERNAME, collectionUsername);
+        bundle.putString(SearchFragment.QUERYINFO, intent.getStringExtra(SearchFragment.QUERYINFO));
         Fragment fragment = ShotListFragment.createInstance();
         fragment.setArguments(bundle);
         return fragment;

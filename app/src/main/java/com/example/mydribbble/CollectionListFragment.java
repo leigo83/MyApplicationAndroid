@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mydribbble.BaseClass.HttpAsyncLoad;
 import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Collection;
+import com.example.mydribbble.model.CollectionSearchResult;
 import com.example.mydribbble.model.Shot;
 import com.example.mydribbble.utils.ModelUtils;
 import com.google.gson.reflect.TypeToken;
@@ -45,6 +46,7 @@ public class CollectionListFragment extends SingleFragment {
     public static final int shotsPerPage = 10;
     public static int REQ_CODE = 10002;
     public RecyclerView recyclerView;
+    public String queryInfo = null;
     List<Collection> dataShot = new ArrayList<>();
     public ShotListAdapter adapter;
     private static OkHttpClient client = new OkHttpClient();
@@ -59,6 +61,7 @@ public class CollectionListFragment extends SingleFragment {
         final String token = getArguments().getString("Token");
         final String userfeature = getArguments().getString("Userfeature");
         m_token = token;
+        queryInfo = getArguments().getString(SearchFragment.QUERYINFO);
         loadMoreTask = new ShotListAdapter.LoadMoreTask() {
             @Override
             public void onLoadMore() {
@@ -68,7 +71,10 @@ public class CollectionListFragment extends SingleFragment {
                     @Override
                     public String createQuery() {
                         StringBuilder sb = new StringBuilder ();
-                        if (userfeature == null) {
+                        if (queryInfo != null) {
+                            sb.append(queryInfo);
+                            sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        } else if (userfeature == null) {
                             sb.append(ShotLink);
                             sb.append("?");
                             sb.append("access_token=");
@@ -90,7 +96,12 @@ public class CollectionListFragment extends SingleFragment {
                     protected void onPostExecute(Response response) {
                         List<Collection> shots = null;
                         try {
-                            shots = this.parseResponse(response, new TypeToken<List<Collection>>() {});
+                            if (queryInfo != null) {
+                                CollectionSearchResult temp = this.parseResponse(response, new TypeToken<CollectionSearchResult>() {});
+                                shots = temp.results;
+                            } else {
+                                shots = this.parseResponse(response, new TypeToken<List<Collection>>() {});
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

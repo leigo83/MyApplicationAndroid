@@ -177,6 +177,27 @@ public class EntranceActivity extends AppCompatActivity {
                         fragment.setArguments(bundle);
                         setTitle("Create new collection");
                         break;
+                    case R.id.drawer_search_photos:
+                        fragment = SearchFragment.createInstance();
+                        bundle.putString("Token", m_token);
+                        bundle.putString("Type", "photos");
+                        fragment.setArguments(bundle);
+                        setTitle("Search Photos");
+                        break;
+                    case R.id.drawer_search_collections:
+                        fragment = SearchFragment.createInstance();
+                        bundle.putString("Token", m_token);
+                        bundle.putString("Type", "collections");
+                        fragment.setArguments(bundle);
+                        setTitle("Search Collections");
+                        break;
+                    case R.id.drawer_search_users:
+                        fragment = SearchFragment.createInstance();
+                        bundle.putString("Token", m_token);
+                        bundle.putString("Type", "users");
+                        fragment.setArguments(bundle);
+                        setTitle("Search Users");
+                        break;
                 }
 
                 drawerLayout.closeDrawers();

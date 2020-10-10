@@ -30,5 +30,6 @@
         <activity android:name=".UploadImageActivity"></activity>
         <activity android:name=".CollectionListActivity"></activity>
         <activity android:name=".CollectionEditActivity"></activity>
+        <activity android:name=".UserListActivity"></activity>
     </application>
 </manifest>

@@ -18,5 +18,17 @@
             android:id="@+id/drawer_create_collection"
             android:title="CREATE_COLLECTION">
         </item>
+        <item
+            android:id="@+id/drawer_search_photos"
+            android:title="SEARCH_PHOTOS">
+        </item>
+        <item
+            android:id="@+id/drawer_search_collections"
+            android:title="SEARCH_COLLECTIONS">
+        </item>
+        <item
+            android:id="@+id/drawer_search_users"
+            android:title="SEARCH_USERS">
+        </item>
     </group>
 </menu>

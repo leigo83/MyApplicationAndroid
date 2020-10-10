@@ -16,6 +16,7 @@ import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Collection;
 import com.example.mydribbble.model.Shot;
 import com.example.mydribbble.model.Shot2Detail;
+import com.example.mydribbble.model.User;
 import com.example.mydribbble.utils.ImageUtils;
 import com.example.mydribbble.utils.ModelUtils;
 import com.google.gson.reflect.TypeToken;
@@ -43,16 +44,21 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
             View view = LayoutInflater.from(shotListFragment.getContext()).inflate(R.layout.list_item_loading, parent, false);
             if (ShotListViewHolder.class == tpClass2) {
                 return (T2)new ShotListViewHolder(view);
-            } else {
+            } else if (CollectionListViewHolder.class == tpClass2) {
                 return (T2)new CollectionListViewHolder(view);
+            } else {
+                return (T2)new UserListViewHolder(view);
             }
         } else {
             if (ShotListViewHolder.class == tpClass2) {
                 View view = LayoutInflater.from(shotListFragment.getContext()).inflate(R.layout.list_item_shot, parent, false);
                 return (T2)new ShotListViewHolder(view);
-            } else {
+            } else if (CollectionListViewHolder.class == tpClass2) {
                 View view = LayoutInflater.from(shotListFragment.getContext()).inflate(R.layout.list_item_collection, parent, false);
                 return (T2)new CollectionListViewHolder(view);
+            } else {
+                View view = LayoutInflater.from(shotListFragment.getContext()).inflate(R.layout.list_item_user, parent, false);
+                return (T2)new UserListViewHolder(view);
             }
         }
     }
@@ -128,7 +134,7 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
                         shotListFragment.startActivityForResult(intent, ((ShotListFragment)shotListFragment).REQ_SHOT_CODE);
                     }
                 });
-            } else {
+            } else if (tpClass1 == Collection.class){
                 final CollectionListViewHolder collectionListViewHolder = (CollectionListViewHolder)holder;
                 final Collection collection = (Collection)data.get(position);
                 final String id = collection.id;
@@ -155,6 +161,22 @@ public class ShotListAdapter<T1, T2 extends RecyclerView.ViewHolder> extends Rec
                         Intent intent = new Intent(shotListFragment.getActivity(), CollectionEditActivity.class);
                         intent.putExtra(CollectionListFragment.COLLECTIONINFO, ModelUtils.toString(collection, new TypeToken<Collection>() {}));
                         shotListFragment.startActivityForResult(intent, CollectionListFragment.REQ_CODE);
+                    }
+                });
+            } else if (tpClass1 == User.class) {
+                final UserListViewHolder userListViewHolder = (UserListViewHolder)holder;
+                final User user = (User)data.get(position);
+                userListViewHolder.username.setText("username: " + user.username);
+                userListViewHolder.likes.setText("likes: " + user.total_likes);
+                userListViewHolder.photos.setText("photos: " + user.total_photos);
+                ImageUtils.loadShotImage(user.getUserImageUrl(), userListViewHolder.userImage);
+
+                userListViewHolder.cover.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(shotListFragment.getActivity(), UserActivity.class);
+                        intent.putExtra(UserActivity.USERINFO, ModelUtils.toString(user, new TypeToken<User>(){}));
+                        shotListFragment.startActivity(intent);
                     }
                 });
             }

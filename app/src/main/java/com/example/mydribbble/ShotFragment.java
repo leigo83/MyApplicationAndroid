@@ -198,7 +198,7 @@ public class ShotFragment extends SingleFragment {
         LinearLayout group = view.findViewById(R.id.add_photo_group);
         String collectionUserName = getArguments().getString(CollectionListFragment.COLLECTIONUSERNAME);
         collectionId = getArguments().getString(CollectionListFragment.COLLECTIONID);
-        if (collectionUserName.equals(Unsplash.username)) {
+        if (collectionUserName != null && collectionUserName.equals(Unsplash.username)) {
             group.setVisibility(View.GONE);
             delete.setVisibility(View.VISIBLE);
         }

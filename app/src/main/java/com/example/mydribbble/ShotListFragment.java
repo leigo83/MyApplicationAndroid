@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.example.mydribbble.BaseClass.HttpAsyncLoad;
 import com.example.mydribbble.BaseFragment.SingleFragment;
 import com.example.mydribbble.model.Shot;
+import com.example.mydribbble.model.ShotSearchResult;
 import com.example.mydribbble.utils.ModelUtils;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,6 +55,7 @@ public class ShotListFragment extends SingleFragment {
     public ShotListAdapter adapter;
     public String collection_username = null;
     public String collection_id = null;
+    public String queryInfo = null;
     private static OkHttpClient client = new OkHttpClient();
     public static String m_token;
     private ShotListAdapter.LoadMoreTask loadMoreTask;
@@ -69,6 +71,7 @@ public class ShotListFragment extends SingleFragment {
         final String userfeature = getArguments().getString("Userfeature");
         collection_username = getArguments().getString(CollectionListFragment.COLLECTIONUSERNAME);
         collection_id = getArguments().getString("CollectionId");;
+        queryInfo = getArguments().getString(SearchFragment.QUERYINFO);
         m_token = token;
         loadMoreTask = new ShotListAdapter.LoadMoreTask() {
             @Override
@@ -79,7 +82,10 @@ public class ShotListFragment extends SingleFragment {
                     @Override
                     public String createQuery() {
                         StringBuilder sb = new StringBuilder ();
-                        if (collection_id != null) {
+                        if (queryInfo != null) {
+                            sb.append(queryInfo);
+                            sb.append("&page=" + Integer.toString(dataShot.size() / shotsPerPage + 1));
+                        } else if (collection_id != null) {
                             sb.append(CollectionLink);
                             sb.append(collection_id);
                             sb.append("/photos");
@@ -109,7 +115,12 @@ public class ShotListFragment extends SingleFragment {
                     protected void onPostExecute(Response response) {
                         List<Shot> shots = null;
                         try {
-                            shots = this.parseResponse(response, new TypeToken<List<Shot>>() {});
+                            if (queryInfo != null) {
+                                ShotSearchResult temp = this.parseResponse(response, new TypeToken<ShotSearchResult>() {});
+                                shots = temp.results;
+                            } else {
+                                shots = this.parseResponse(response, new TypeToken<List<Shot>>() {});
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

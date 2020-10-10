@@ -15,6 +15,7 @@ public class CollectionListActivity extends SingleFragmentActivity {
         Intent intent = getIntent();
         bundle.putString("Token", Unsplash.token);
         bundle.putString("Userfeature", intent.getStringExtra(UserFragment.USER_FEATURE));
+        bundle.putString(SearchFragment.QUERYINFO, intent.getStringExtra(SearchFragment.QUERYINFO));
         fragment.setArguments(bundle);
         return fragment;
     }
