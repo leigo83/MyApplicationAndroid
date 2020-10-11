@@ -4,8 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="20dp"
-    android:paddingTop = "10dp"
     android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
@@ -22,11 +28,107 @@
             android:layout_gravity="center">
         </TextView>
     </LinearLayout>
-    <TextView
-        android:id="@+id/name"
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
-    </TextView>
+        android:layout_width="match_parent">
+        <TextView
+            android:id="@+id/first_name"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        </TextView>
+        <EditText
+            android:id="@+id/first_name_edit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone">
+        </EditText>
+        <TextView
+            android:id="@+id/last_name"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        </TextView>
+        <EditText
+            android:id="@+id/last_name_edit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/email"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        </TextView>
+        <EditText
+            android:id="@+id/email_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/url"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        </TextView>
+        <EditText
+            android:id="@+id/url_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/location"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+         </TextView>
+        <EditText
+            android:id="@+id/location_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/bio"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        </TextView>
+        <EditText
+            android:id="@+id/bio_edit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone">
+        </EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/instagram_username"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        </TextView>
+        <EditText
+            android:id="@+id/instagram_username_edit"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone">
+        </EditText>
+    </LinearLayout>
     <TextView
         android:id="@+id/total_likes"
         android:layout_height="wrap_content"
@@ -70,4 +172,13 @@
         android:layout_width="wrap_content"
         android:clickable="true">
     </Button>
+    <Button
+        android:id="@+id/save_user_info"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="save"
+        android:visibility="gone">
+    </Button>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

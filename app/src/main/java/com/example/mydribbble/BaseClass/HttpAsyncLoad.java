@@ -74,7 +74,9 @@ public abstract class HttpAsyncLoad<T> extends AsyncTask<Void, Void, Response> {
 
     public Response putRequest(String url, RequestBody requestBody) throws IOException {
         Request request = new Request.Builder().url(url).put(requestBody).build();
+        Log.d("ShotQuery", requestBody.toString());
         Response response = client.newCall(request).execute();
+        Log.d("ShotQuery", response.toString());
         return response;
     }
 

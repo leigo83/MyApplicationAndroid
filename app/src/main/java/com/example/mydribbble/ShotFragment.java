@@ -2,8 +2,13 @@ package com.example.mydribbble;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
@@ -24,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.mydribbble.BaseClass.HttpAsyncLoad;
@@ -39,7 +45,12 @@ import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Text;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +58,7 @@ import java.util.List;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import java.io.File;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -184,7 +196,7 @@ public class ShotFragment extends SingleFragment {
     }
 
     private void setViews(View view) {
-        SimpleDraweeView image = view.findViewById(R.id.shot_image);
+        final SimpleDraweeView image = view.findViewById(R.id.shot_image);
         final TextView likes = view.findViewById(R.id.likes);
         final TextView dislikes = view.findViewById(R.id.dislikes);
         TextView username = view.findViewById(R.id.username);
@@ -359,6 +371,79 @@ public class ShotFragment extends SingleFragment {
                         sb.append("&photo_id=" + photoId);
                         Log.d("ShotQuery", sb.toString());
                         return sb.toString();
+                    }
+                }.execute();
+            }
+        });
+
+        Button downloadImage = view.findViewById(R.id.download_image);
+        downloadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AsyncTask<Void, Void, Bitmap>() {
+                    @Override
+                    protected Bitmap doInBackground(Void... voids) {
+                        Bitmap mIcon11 = null;
+                        try {
+                            InputStream in = new java.net.URL(shotDetail.getImageUrl()).openStream();
+                            mIcon11 = BitmapFactory.decodeStream(in);
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage());
+                            e.printStackTrace();
+                        }
+                        return mIcon11;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Bitmap bitmap) {
+                        MediaStore.Images.Media.insertImage(getContext().getApplicationContext().getContentResolver(), bitmap, shotDetail.description, null);
+                    }
+                }.execute();
+            }
+        });
+
+        Button shareImage = view.findViewById(R.id.share_image);
+        final Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/jpeg");
+        shareImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AsyncTask<Void, Void, Bitmap>() {
+                    @Override
+                    protected Bitmap doInBackground(Void... voids) {
+                        Bitmap mIcon11 = null;
+                        try {
+                            InputStream in = new java.net.URL(shotDetail.getImageUrl()).openStream();
+                            File file = new File(getActivity().getExternalCacheDir(),"temp.jpg");
+                            mIcon11 = BitmapFactory.decodeStream(in);
+                        } catch (Exception e) {
+                            Log.e("Error", e.getMessage());
+                            e.printStackTrace();
+                        }
+                        return mIcon11;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Bitmap bitmap) {
+                        File file = new File(getContext().getExternalCacheDir(),"temp.jpg");
+                        FileOutputStream fOut = null;
+                        try {
+                            fOut = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                            fOut.flush();
+                            fOut.close();
+                            file.setReadable(true, false);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Uri imageUri = FileProvider.getUriForFile(
+                                getContext(),
+                                getActivity().getPackageName() + ".provider",
+                                file);
+                        share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                        startActivity(Intent.createChooser(share, "Select"));
                     }
                 }.execute();
             }

@@ -67,7 +67,8 @@ public class CreateCollectionFragment extends SingleFragment {
                          Toast.makeText(getContext(), "Deleted!", Toast.LENGTH_LONG).show();
                          FragmentManager fm = getFragmentManager();
                          if (fm.getBackStackEntryCount() > 0) {
-                             Log.i("ShotQuery", "popping backstack");
+                             Log.i("ShotQuery", "" +
+                                     "popping backstack");
                              fm.popBackStack();
                          } else {
                              Intent resultIntent = new Intent(getActivity(), CollectionListActivity.class);

@@ -14,6 +14,13 @@ public class User {
     public String total_collections;
     public String followers_count;
     public String following_count;
+    public String first_name;
+    public String last_name;
+    public String email;
+    public String portfolio_url;
+    public String location;
+    public String bio;
+    public String instgram_username;
 
     public String getUserImageUrl() {
         if (this.profile_image.size() == 0) {

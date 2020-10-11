@@ -98,6 +98,18 @@
             </Button>
         </LinearLayout>
         <Button
+            android:id="@+id/download_image"
+            android:text="download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Button>
+        <Button
+            android:id="@+id/share_image"
+            android:text="share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Button>
+        <Button
             android:id="@+id/remove_photo"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
